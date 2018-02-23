@@ -117,21 +117,47 @@ module Option
 	
       # Normal Standard Distribution
       # using Taylor's approximation
-      def norm_sdist( z )
+      def norm_sdist_old( z )
         return 0.0 if z < MIN_Z_SCORE
         return 1.0 if z > MAX_Z_SCORE
-		
+
         i, sum, term = 3.0, 0.0, z
-		
+
         while( sum + term != sum )
           sum = sum + term
           term = term * z * z / i
-		  i += 2.0
+          i += 2.0
         end
-		
+
         0.5 + sum * phi(z)
       end
-	
+
+      def norm_sdist(z)
+        return 0.0 if z < MIN_Z_SCORE
+        return 1.0 if z > MAX_Z_SCORE
+        return 0.5 if z == 0.0
+
+        if z > 0.0
+          e = true
+        else
+          e = false
+          z = -z
+        end
+        z = z.to_f
+        z2 = z * z
+        t = q = z * Math.exp(-0.5 * z2) / SQ2PI
+
+        3.step(199, 2) do |i|
+          prev = q
+          t *= z2 / i
+          q += t
+          if q <= prev
+            return(e ? 0.5 + q : 0.5 - q)
+          end
+        end
+        e ? 1.0 : 0.0
+      end
+
       # Standard Gaussian pdf
       def phi(x)
         numerator = exp(-1.0 * x*x / 2.0)
