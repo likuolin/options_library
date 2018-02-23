@@ -117,7 +117,7 @@ module Option
 	
       # Normal Standard Distribution
       # using Taylor's approximation
-      def norm_sdist_old( z )
+      def norm_sdist( z )
         return 0.0 if z < MIN_Z_SCORE
         return 1.0 if z > MAX_Z_SCORE
 
@@ -132,7 +132,7 @@ module Option
         0.5 + sum * phi(z)
       end
 
-      def norm_sdist(z)
+      def norm_sdist_new(z)
         return 0.0 if z < MIN_Z_SCORE
         return 1.0 if z > MAX_Z_SCORE
         return 0.5 if z == 0.0
